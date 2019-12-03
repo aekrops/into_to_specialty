@@ -1,111 +1,125 @@
 #include <iostream>
-#include <math.h>
-#define n 5
+#include <cmath>
+#include <iomanip>
+
+#define size 5
 using namespace std;
-/*
-    3 5 9 24 2
-    1 74 -2 80 -1
-    52 -5 -7 53 19
-    11 88 -5 81 -39
-    -3 -8 -4 -6 -22
- */
 
 class Vector {
 private:
-    int arr[5];
+    int rowArray[size];
 public:
-    friend void EnterTheMatrix(Vector matrix[]) {
-        for (int j = 0; j < n; ++j) {
-            for (int i = 0; i < n; ++i) {
-                cin >> matrix[i].arr[j];
+    friend void setMatrix(Vector matrix[])
+    {
+        for (int row = 0; row < size; row++)
+        {
+            for (int column = 0; column < size; column++)
+            {
+                cin >> matrix[column].rowArray[row];
             }
         }
-
     }
 
-    void mergeSort(int begin, int end) {
-        if (begin < end) {
+    void ascendingColumnMergeSort(int begin, int end)
+    {
+        if (begin < end)
+        {
             int middle = (begin + end) / 2;
-            mergeSort(begin, middle);
-            mergeSort(middle + 1, end);
+            ascendingColumnMergeSort(begin, middle);
+            ascendingColumnMergeSort(middle + 1, end);
             merge(begin, middle, end);
         }
     }
-    friend void ShowTheMatrix(Vector matrix[])
+
+    friend void getMatrix(Vector matrix[])
     {
-        for(int j = 0; j < n; j++)
+        for(int row = 0; row < size; row++)
         {
-            for (int i = 0; i < n; ++i) {
-                cout << matrix[i].arr[j]<< " ";
+            for (int column = 0; column < size; column++)
+            {
+                cout << setw(3) <<matrix[column].rowArray[row]<< " ";
             }
             cout << endl;
         }
         cout<<endl;
     }
-    void merge(int begin, int middle, int end) {
-        int t[5];
+
+    void merge(int begin, int middle, int end)
+    {
+        int unitingArray[size];
         int i = begin, j = middle + 1, k = 0;
 
-        while (i <= middle && j <= end) {
-            if (this->arr[i] <= this->arr[j]) {
-                t[k] = this->arr[i];
+        while (i <= middle && j <= end)
+        {
+            if (this->rowArray[i] <= this->rowArray[j])
+            {
+                unitingArray[k] = this->rowArray[i];
                 k++;
                 i++;
-            } else {
-                t[k] = this->arr[j];
-                k++;
-                j++;
-            }
+            } else
+                 {
+                    unitingArray[k] = this->rowArray[j];
+                    k++;
+                    j++;
+                 }
         }
 
-        while (i <= middle) {
-            t[k] = this->arr[i];
+
+        while (i <= middle)
+        {
+            unitingArray[k] = this->rowArray[i];
             k++;
             i++;
         }
 
-        while (j <= end) {
-            t[k] = this->arr[j];
+
+        while (j <= end)
+        {
+            unitingArray[k] = this->rowArray[j];
             k++;
             j++;
         }
-        for (i = begin; i <= end;i++) {
-            this->arr[i] = t[i - begin];
+
+        for (i = begin; i <= end;i++)
+        {
+            this->rowArray[i] = unitingArray[i - begin];
         }
     }
-    double Calculation(Vector matrix[])
+
+    double calculation(Vector matrix[])
     {
-        int sum[4] = {0, 0, 0, 0};
-        double result= 1;
-        for(int j = 0; j<n-1;j++){
-            for (int i = j+1; i < n;i++) {
-                sum[j] += matrix[j].arr[i];
+        int sumUnderMainDiagonal[size - 1] = {0, 0, 0, 0};
+        double multiplies = 1;
+        double geometricMean;
+        for(int column = 0; column < size - 1;column++)
+        {
+            for (int row = column+1; row < size;row++)
+            {
+                sumUnderMainDiagonal[column] += matrix[column].rowArray[row];
             }
-            result *= sum[j];
-            cout <<"Sum of column: "<< sum[j] << endl;
+            cout <<"Sum of elements of the column under the main diagonal of matrix: "<<setw(2)<< sumUnderMainDiagonal[column] << endl;
+            multiplies *= sumUnderMainDiagonal[column];
         }
         cout << endl;
-        result = pow(result, 1.0/4.0);
-        cout<<"Average geometric:"<< result <<endl;
+        geometricMean = pow(multiplies, 1.0/4.0);
+        cout<<"Average geometric:"<< geometricMean <<endl;
         }
     };
 
-
 int main()
 {
-    Vector Matrix[n];
+    Vector MyMatrix[size];
     cout << "Enter the matrix:" << endl;
-    EnterTheMatrix(Matrix);
+    setMatrix(MyMatrix);
 
-    //for passing again the matrix
-    for (int i = 0; i < n; ++i)
+    for (int column = 0; column < size; column++)
         {
-            Matrix[i].mergeSort(0, n-1);
+            MyMatrix[column].ascendingColumnMergeSort(0, size - 1);
         }
 
     cout<<"Sorted matrix:"<< endl;
-    ShowTheMatrix(Matrix);
-    Matrix->Calculation(Matrix);
+    getMatrix(MyMatrix);
+    MyMatrix->calculation(MyMatrix);
 
     return 0;
 }
